@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * ---------------------------------------------------------------------
  *  catsurvey is a plugin to manage inquests by ITIL categories
@@ -26,50 +27,79 @@
  *  @link      https://plugins.glpi-project.org/#/plugin/catsurvey
  *  ---------------------------------------------------------------------
  */
-class PluginCatsurveyCatsurvey extends CommonDBTM {
 
-   public static function canCreate() {
-         return Session::haveRight("entity", CREATE);
-   }
+/**
+ * Main class for the catsurvey plugin.
+ */
+class PluginCatsurveyCatsurvey extends CommonDBTM
+{
+    /**
+     * Check if the user can create.
+     */
+    public static function canCreate(): bool
+    {
+        return Session::haveRight("entity", CREATE);
+    }
 
-   public static function canView() {
-         return Session::haveRight("entity", UPDATE);
-   }
+    /**
+     * Check if the user can view.
+     */
+    public static function canView(): bool
+    {
+        return Session::haveRight("entity", UPDATE);
+    }
 
-   public static function canDelete() {
-      return Session::haveRight("entity", UPDATE);
-   }
+    /**
+     * Check if the user can delete.
+     */
+    public static function canDelete(): bool
+    {
+        return Session::haveRight("entity", UPDATE);
+    }
 
-   public static function cronInfo($name) {
-      switch ($name) {
-         case 'createinquestbycat' :            
-               return ['description' => __('Generating satisfaction surveys by categories', 'catsurvey')];
-      }
-       return [];
-   }
+    /**
+     * Get cron info.
+     *
+     * @param string $name
+     * @return array
+     */
+    public static function cronInfo(string $name): array
+    {
+        switch ($name) {
+            case 'createinquestbycat':
+                return ['description' => __('Generating satisfaction surveys by categories', 'catsurvey')];
+        }
+        return [];
+    }
 
-   static function cronCreateInquestByCat($task) {
-      global $DB;
+    /**
+     * Cron task to create inquest by category.
+     *
+     * @param mixed $task
+     * @return void
+     */
+    public static function cronCreateInquestByCat($task): void
+    {
+        global $DB;
 
-      $conf        = new self();
-      $inquest     = new TicketSatisfaction();
-      $tot         = 0;
-      $tabcategories = [];
+        $conf        = new self();
+        $inquest     = new TicketSatisfaction();
+        $tot         = 0;
+        $tabcategories = [];
 
-      foreach ($DB->request('glpi_itilcategories') as $cat) {
-         $rate   = self::getUsedConfig($cat['id'], 'inquest_rate');
+        foreach ($DB->request('glpi_itilcategories') as $cat) {
+            $rate = self::getUsedConfig($cat['id'], 'inquest_rate');
+            if ($rate > 0) {
+                $tabcategories[$cat['id']] = $rate;
+            }
+        }
 
-         if ($rate > 0) {
-            $tabcategories[$cat['id']] = $rate;
-         }
-      }
+        foreach ($tabcategories as $cat => $rate) {
+            $delay         = self::getUsedConfig($cat, 'inquest_delay');
+            $type          = self::getUsedConfig($cat, 'inquest_config');
+            $max_closedate = self::getUsedConfig($cat, 'max_closedate');
 
-      foreach ($tabcategories as $cat => $rate) {
-         $delay         = self::getUsedConfig($cat, 'inquest_delay');
-         $type          = self::getUsedConfig($cat, 'inquest_config');
-         $max_closedate = self::getUsedConfig($cat, 'max_closedate');
-
-         $query = "SELECT `glpi_tickets`.`id`,
+            $query = "SELECT `glpi_tickets`.`id`,
                           `glpi_tickets`.`closedate`,
                           `glpi_tickets`.`itilcategories_id`
                    FROM `glpi_tickets`
@@ -106,7 +136,10 @@ class PluginCatsurveyCatsurvey extends CommonDBTM {
          }
       }
 
-      return ($tot > 0);
+    // Do not return a value from a void method
+    // $tot > 0 can be used for logging or other purposes if needed
+    // but must not be returned from a void method
+    // Removed return statement for PHP 8.4 compatibility
    }
 
    function getTabNameForItem(CommonGLPI $item, $withtemplate = 0) {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * ---------------------------------------------------------------------
  *  catsurvey is a plugin to manage inquests by ITIL categories
@@ -26,13 +27,18 @@
  *  @link      https://plugins.glpi-project.org/#/plugin/catsurvey
  *  ---------------------------------------------------------------------
  */
-function plugin_catsurvey_install() {
+
+/**
+ * Install the catsurvey plugin.
+ *
+ * @return bool
+ */
+function plugin_catsurvey_install(): bool {
     global $DB;
 
-   if (!$DB->tableExists("glpi_plugin_catsurvey_catsurveys")) {
-
-       // Création de la table
-       $query = "CREATE TABLE glpi_plugin_catsurvey_catsurveys (
+    if (!$DB->tableExists("glpi_plugin_catsurvey_catsurveys")) {
+        // Création de la table
+        $query = "CREATE TABLE glpi_plugin_catsurvey_catsurveys (
                     id INT UNSIGNED NOT NULL default '0' COMMENT 'RELATION to glpi_itilcategories (id)',
                     max_closedate TIMESTAMP default NULL,
                     inquest_config int(11) NOT NULL default '1',

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * ---------------------------------------------------------------------
  *  catsurvey is a plugin to manage inquests by ITIL categories
@@ -26,7 +27,8 @@
  *  @link      https://plugins.glpi-project.org/#/plugin/catsurvey
  *  ---------------------------------------------------------------------
  */
-include ("../../../inc/includes.php");
+
+include("../../../inc/includes.php");
 
 Session::haveRight("entity", UPDATE);
 

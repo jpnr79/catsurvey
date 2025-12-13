@@ -1,12 +1,11 @@
 <?php
+declare(strict_types=1);
 /**
  * ---------------------------------------------------------------------
  *  catsurvey is a plugin to manage inquests by ITIL categories
  *  ---------------------------------------------------------------------
  *  LICENSE
- *
- *  This file is part of catsurvey.
- *
+<?php
  *  catsurvey is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 3 of the License, or
@@ -33,7 +32,12 @@ define("PLUGIN_CATSURVEY_GLPI_MIN_VERSION", "9.4");
 // Maximum GLPI version, exclusive
 define("PLUGIN_CATSURVEY_GLPI_MAX_VERSION", "11.0");
 
-function plugin_version_catsurvey() {
+/**
+ * Get the version information for the catsurvey plugin.
+ *
+ * @return array{name: string, version: string, author: string, license: string, homepage: string, requirements: array}
+ */
+function plugin_version_catsurvey(): array {
     return [
         'name' => 'Catsurvey',
         'version' => PLUGIN_CATSURVEY_VERSION,
@@ -52,32 +56,45 @@ function plugin_version_catsurvey() {
     ];
 }
 
-function plugin_catsurvey_check_prerequisites() {
-   try {
-      if (version_compare(GLPI_VERSION, PLUGIN_CATSURVEY_GLPI_MIN_VERSION, '<')) {
-          throw new \Exception('This plugin requires GLPI >= ' . PLUGIN_CATSURVEY_GLPI_MIN_VERSION);
-      }
-
-       $prerequisites_check_ok = true;
-   } catch (\Exception $e) {
-       echo $e->getMessage();
-   }
-
-    return $prerequisites_check_ok;
+/**
+ * Check plugin prerequisites.
+ *
+ * @return bool
+ */
+function plugin_catsurvey_check_prerequisites(): bool {
+    try {
+        if (version_compare(GLPI_VERSION, PLUGIN_CATSURVEY_GLPI_MIN_VERSION, '<')) {
+            throw new Exception('This plugin requires GLPI >= ' . PLUGIN_CATSURVEY_GLPI_MIN_VERSION);
+        }
+        return true;
+    } catch (Exception $e) {
+        echo $e->getMessage();
+        return false;
+    }
 }
 
-function plugin_catsurvey_check_config($verbose = false) {
-   if (true) { // No configuration check
-       return true;
-   }
-
-   if ($verbose) {
-       echo 'Installed / not configured';
-   }
+/**
+ * Check plugin configuration.
+ *
+ * @param bool $verbose
+ * @return bool
+ */
+function plugin_catsurvey_check_config(bool $verbose = false): bool {
+    if (true) { // No configuration check
+        return true;
+    }
+    if ($verbose) {
+        echo 'Installed / not configured';
+    }
     return false;
 }
 
-function plugin_init_catsurvey() {
+/**
+ * Initialize the catsurvey plugin.
+ *
+ * @return void
+ */
+function plugin_init_catsurvey(): void {
     global $PLUGIN_HOOKS;
 
     $PLUGIN_HOOKS['csrf_compliant']['catsurvey'] = true;

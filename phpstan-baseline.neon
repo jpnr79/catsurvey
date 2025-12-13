@@ -1,0 +1,25 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Call to static method Register\(\) on an unknown class CronTask\.$#'
+			identifier: class.notFound
+			count: 1
+			path: hook.php
+
+		-
+			message: '#^Call to an undefined static method Dropdown\:\:showNumber\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 2
+			path: inc/catsurvey.class.php
+
+		-
+			message: '#^Call to an undefined static method Html\:\:showDateTimeField\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: inc/catsurvey.class.php
+
+		-
+			message: '#^Instantiated class TicketSatisfaction not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: inc/catsurvey.class.php
