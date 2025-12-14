@@ -30,7 +30,7 @@ define('PLUGIN_CATSURVEY_VERSION', "1.0.0");
 // Minimal GLPI version, inclusive
 define("PLUGIN_CATSURVEY_GLPI_MIN_VERSION", "9.4");
 // Maximum GLPI version, exclusive
-define("PLUGIN_CATSURVEY_GLPI_MAX_VERSION", "11.0");
+define("PLUGIN_CATSURVEY_GLPI_MAX_VERSION", "12.0");
 
 /**
  * Get the version information for the catsurvey plugin.

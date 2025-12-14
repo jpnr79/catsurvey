@@ -99,19 +99,30 @@ class PluginCatsurveyCatsurvey extends CommonDBTM
             $type          = self::getUsedConfig($cat, 'inquest_config');
             $max_closedate = self::getUsedConfig($cat, 'max_closedate');
 
-            $query = "SELECT `glpi_tickets`.`id`,
-                          `glpi_tickets`.`closedate`,
-                          `glpi_tickets`.`itilcategories_id`
-                   FROM `glpi_tickets`
-                   LEFT JOIN `glpi_ticketsatisfactions`
-                       ON `glpi_ticketsatisfactions`.`tickets_id` = `glpi_tickets`.`id`
-                   WHERE `glpi_tickets`.`itilcategories_id` = '$cat'
-                         AND `glpi_tickets`.`is_deleted` = 0
-                         AND `glpi_tickets`.`status` = '6'
-                         AND `glpi_tickets`.`closedate` > '$max_closedate'
-                         AND ADDDATE(`glpi_tickets`.`closedate`, INTERVAL $delay DAY)<=NOW()
-                         AND `glpi_ticketsatisfactions`.`id` IS NULL
-                   ORDER BY `closedate` ASC";
+            $query = [
+                'SELECT' => ['glpi_tickets.id', 'glpi_tickets.closedate', 'glpi_tickets.itilcategories_id'],
+                'FROM' => 'glpi_tickets',
+                'LEFT JOIN' => [
+                    'glpi_ticketsatisfactions' => [
+                        'ON' => [
+                            'glpi_ticketsatisfactions.tickets_id' => 'glpi_tickets.id'
+                        ]
+                    ]
+                ],
+                'WHERE' => [
+                    'glpi_tickets.itilcategories_id' => $cat,
+                    'glpi_tickets.is_deleted' => 0,
+                    'glpi_tickets.status' => 6,
+                    ['>', 'glpi_tickets.closedate', $max_closedate],
+                    ['IS NULL', 'glpi_ticketsatisfactions.id']
+                ],
+                'ORDER' => 'glpi_tickets.closedate ASC'
+            ];
+
+            // Add the date condition separately since it's complex
+            $query['WHERE'][] = [
+                'RAW' => "ADDDATE(`glpi_tickets`.`closedate`, INTERVAL $delay DAY) <= NOW()"
+            ];
 
          $nb            = 0;
          $max_closedate = '';
