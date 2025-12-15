@@ -164,18 +164,18 @@ class PluginCatsurveyCatsurvey extends CommonDBTM
        return '';
    }
 
-   static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0) {
+    public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0): bool {
 
-      if ($item->getType() == 'ITILCategory') {
-           $cat = new self();
-           $ID = $item->getField('id');
-         if (!$cat->getfromDB($ID)) {
-            $cat->addCat($ID);
-         }
-           $cat->showForm($ID);
-      }
-       return true;
-   }
+        if ($item->getType() == 'ITILCategory') {
+              $cat = new self();
+              $ID = $item->getField('id');
+            if (!$cat->getfromDB($ID)) {
+                $cat->addCat($ID);
+            }
+              $cat->showForm($ID);
+        }
+         return true;
+    }
 
    function addCat($ID) {
 
