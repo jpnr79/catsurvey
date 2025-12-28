@@ -71,6 +71,10 @@ function plugin_catsurvey_check_prerequisites(): bool {
         }
         return true;
     } catch (Exception $e) {
+        Toolbox::logInFile('catsurvey', sprintf(
+            'ERROR [%s:%s] Exception: %s, user=%s',
+            __FILE__, __FUNCTION__, $e->getMessage(), $_SESSION['glpiname'] ?? 'unknown'
+        ));
         echo $e->getMessage();
         return false;
     }
